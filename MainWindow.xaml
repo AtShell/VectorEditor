@@ -13,27 +13,30 @@
             <ColumnDefinition Width="343*"/>
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
-        <Canvas x:Name="DrawSpace" Grid.Column="2" MouseLeftButtonUp="DrawSpace_MouseLeftButtonUp" MouseMove="DrawSpace_MouseMove" Background="White">
-            <Canvas.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Rotate" Click="Rotate"/>
-                    <MenuItem Header="To Group"/>
-                </ContextMenu>
-            </Canvas.ContextMenu>
-        </Canvas>
         <Label Content="Цвет" HorizontalAlignment="Left" Margin="2,16,0,0" VerticalAlignment="Top" FontSize="20" Grid.Column="1" Height="37" Width="54"/>
-        <Label Content="Толщина
-               " HorizontalAlignment="Left" Margin="2,123,0,0" VerticalAlignment="Top" FontSize="20" Grid.ColumnSpan="2" Grid.Column="1" Height="37" Width="180"/>
-        <Slider x:Name="FigureThickness" HorizontalAlignment="Center" Margin="0,160,0,0" VerticalAlignment="Top" Width="100" Grid.Column="1" Minimum="1" Height="18"/>
-        <Label Content="Объект
-               " HorizontalAlignment="Left" Margin="3,194,0,0" VerticalAlignment="Top" FontSize="20" Grid.ColumnSpan="2" Grid.Column="1" Height="37" Width="180"/>
+        <Label Content="Толщина                " HorizontalAlignment="Left" Margin="2,123,0,0" VerticalAlignment="Top" FontSize="20" Grid.ColumnSpan="2" Grid.Column="1" Height="37" Width="180"/>
+        <Slider x:Name="FigureThickness" HorizontalAlignment="Center" Margin="0,160,0,0" VerticalAlignment="Top" Width="100" Grid.Column="1" Minimum="1" Height="18" Value="10" ValueChanged="FigureThickness_ValueChanged"/>
+        <Label Content="Объект                " HorizontalAlignment="Left" Margin="3,194,0,0" VerticalAlignment="Top" FontSize="20" Grid.ColumnSpan="2" Grid.Column="1" Height="37" Width="180"/>
         <Button x:Name="Black" Grid.Column="1" HorizontalAlignment="Left" Margin="2,48,0,0" VerticalAlignment="Top" Background="Black" Width="30" Height="30" Click="Black_Click"/>
         <Button x:Name="Grey" Grid.Column="1" HorizontalAlignment="Center" Margin="0,48,0,0" VerticalAlignment="Top" Background="Gray" Width="30" Height="30" Click="Grey_Click"/>
         <Button x:Name="Red" Grid.Column="1" HorizontalAlignment="Left" Margin="73,48,0,0" VerticalAlignment="Top" Background="Red" Width="30" Height="30" Click="Red_Click"/>
         <Button x:Name="Blue" Grid.Column="1" HorizontalAlignment="Center" Margin="0,83,0,0" VerticalAlignment="Top" Background="Blue" Width="30" Height="30" Click="Blue_Click"/>
         <Button x:Name="Yellow" Grid.Column="1" HorizontalAlignment="Left" Margin="2,83,0,0" VerticalAlignment="Top" Background="Yellow" Width="30" Height="30" Click="Yellow_Click"/>
         <Button x:Name="Green" Grid.Column="1" HorizontalAlignment="Left" Margin="73,83,0,0" VerticalAlignment="Top" Background="Green" Width="30" Height="30" Click="Green_Click"/>
-        <Button x:Name="LineButton" Grid.Column="1" HorizontalAlignment="Left" Margin="17,249,0,0" VerticalAlignment="Top" Background="#FFB51010" Width="30" Height="30"/>
-        <Button Grid.Column="1" HorizontalAlignment="Left" Margin="53,332,0,0" VerticalAlignment="Top" Width="30" Height="30" Background="#FF96FF04"/>
+        <Button x:Name="LineButton" Grid.Column="1" HorizontalAlignment="Left" Margin="14,332,0,0" VerticalAlignment="Top" Background="#FFB51010" Width="30" Height="30" Click="LineButton_Click"/>
+        <Button x:Name="RectButton" Grid.Column="1" HorizontalAlignment="Left" Margin="53,332,0,0" VerticalAlignment="Top" Width="30" Height="30" Background="#FF96FF04" Click="RectButton_Click"/>
+        <Canvas x:Name="DrawSpace" MouseLeftButtonUp="DrawSpace_MouseLeftButtonUp" MouseMove="DrawSpace_MouseMove" Background="White" MouseDown="DrawSpace_MouseDown" HorizontalAlignment="Center" Width="666" Grid.Column="2">
+            <Canvas.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Rotate" Click="RotateButton"/>
+                    <MenuItem Header="To Group" Click="ToGroup"/>
+                    <MenuItem Header="Fill" Click="Fill"/>
+                </ContextMenu>
+            </Canvas.ContextMenu>
+        </Canvas>
+        <Button x:Name="DragMode" Grid.Column="1" HorizontalAlignment="Left" Margin="68,231,0,0" VerticalAlignment="Top" Width="30" Height="30" Click="DragButton_Click" Background="#FF9C4848"/>
+        <Label x:Name="MousePosition" Grid.Column="1" Content="000;000" HorizontalAlignment="Center" Margin="0,385,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.284,-0.191"/>
+        <Button x:Name="EllipseButton" Grid.Column="1" HorizontalAlignment="Left" Margin="14,285,0,0" VerticalAlignment="Top" Width="30" Height="30" Background="#FFFF6B04" Click="EllipseButton_Click"/>
+        <Button x:Name="TriangleButton" Grid.Column="1" HorizontalAlignment="Left" Margin="53,285,0,0" VerticalAlignment="Top" Width="30" Height="30" Background="#FF0436FF" Click="TriangleButton_Click"/>
     </Grid>
 </Window>
