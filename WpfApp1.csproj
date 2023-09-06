@@ -113,5 +113,23 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="rect.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ellipse.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="triangle.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="drag.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="line.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="erazer.bmp" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

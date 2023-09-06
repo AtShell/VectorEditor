@@ -45,16 +45,17 @@ namespace WpfApp1
         private Rectangle rect;
         private Ellipse elipse;
         private Polygon triangle;
-
+        private MainWindow window;
         public double strongBrush;
         public short defultMode = 0;
         public short color = 0;
         public Dictionary<Shape, Brush> TakenShapes = new Dictionary<Shape, Brush>();
         #endregion
 
-        public MyTransform(double strong)
+        public MyTransform(double strong,MainWindow win)
         {
             strongBrush = strong;
+            window= win;
         }
         public MyTransform() { }
 
@@ -202,15 +203,27 @@ namespace WpfApp1
                     break;
             }
         }
-        public void Recolor()
+        public void Recolor(bool fill)
         {
             foreach (Shape shape in TakenShapes.Keys)
             {
-                InitializeColorStroke(shape);
+                if (fill)
+                    InitializeColorFill(shape);
+                else
+                    InitializeColorStroke(shape);
             }
-            TakenShapes.Clear();
+            if (fill)
+                TakenShapeClear();
+            else
+                TakenShapes.Clear();
         }
         #endregion
+
+
+        #region test
+
+        #endregion
+
 
         #region TakenList manipulation
         public void Select(MouseButtonEventArgs e)
@@ -218,15 +231,19 @@ namespace WpfApp1
             try
             {
                 var type = (Shape)e.Source;
+                
                 //add to empty list
                 if (TakenShapes.Count == 0)
                 {
                     AddShape(ref type);
+                    window.FigureThickness.Value = TakenShapes.First().Key.StrokeThickness;
                     return;
                 }
                 //add or switch 
                 if (TakenShapes.Count == 1)
                 {
+                    window.FigureThickness.Value = TakenShapes.First().Key.StrokeThickness;
+
                     if (TakenShapes.ContainsKey(type))
                     {
                         TakenShapeRemove(type);
@@ -241,6 +258,7 @@ namespace WpfApp1
                     {
                         TakenShapeClear();
                         AddShape(ref type);
+                        window.FigureThickness.Value = TakenShapes.First().Key.StrokeThickness;
                         return;
                     }
                 }
@@ -334,13 +352,12 @@ namespace WpfApp1
             }
             posInBlock = pos;
         }
-        public void Fill()
+        public void BrushEdit()
         {
             foreach (Shape shape in TakenShapes.Keys)
             {
-                InitializeColorFill(shape);
+                shape.StrokeThickness = strongBrush;
             }
-            TakenShapeClear();
         }
         public Shape Resize(Point pos, Shape name)
         {

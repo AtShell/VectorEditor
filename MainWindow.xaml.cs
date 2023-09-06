@@ -16,7 +16,7 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
-            transform = new MyTransform(FigureThickness.Value);
+            transform = new MyTransform(FigureThickness.Value, this);
         }
         private void newLine_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -89,37 +89,43 @@ namespace WpfApp1
         private void Black_Click(object sender, RoutedEventArgs e)
         {
             transform.color = (short)MyTransform.Colors.black;
-            transform.Recolor();
+            transform.Recolor(false);
+            ColorPicker.Fill = Black.Background;
         }
 
         private void Grey_Click(object sender, RoutedEventArgs e)
         {
             transform.color = (short)MyTransform.Colors.gray;
-            transform.Recolor();
+            transform.Recolor(false);
+            ColorPicker.Fill = Grey.Background;
         }
 
         private void Red_Click(object sender, RoutedEventArgs e)
         {
             transform.color = (short)MyTransform.Colors.red;
-            transform.Recolor();
+            transform.Recolor(false);
+            ColorPicker.Fill = Red.Background;
         }
 
         private void Yellow_Click(object sender, RoutedEventArgs e)
         {
             transform.color = (short)MyTransform.Colors.yellow;
-            transform.Recolor();
+            transform.Recolor(false);
+            ColorPicker.Fill = Yellow.Background;
         }
 
         private void Blue_Click(object sender, RoutedEventArgs e)
         {
             transform.color = (short)MyTransform.Colors.blue;
-            transform.Recolor();
+            transform.Recolor(false);
+            ColorPicker.Fill = Blue.Background;
         }
 
         private void Green_Click(object sender, RoutedEventArgs e)
         {
             transform.color = (short)MyTransform.Colors.green;
-            transform.Recolor();
+            transform.Recolor(false);
+            ColorPicker.Fill = Green.Background;
         }
         #endregion
 
@@ -151,7 +157,7 @@ namespace WpfApp1
                     {
                         try
                         {
-                        DrawSpace.Children.Add(transform.Resize(pos, transform.TakenShapes.Keys.First()));
+                            DrawSpace.Children.Add(transform.Resize(pos, transform.TakenShapes.Keys.First()));
                         }
                         catch
                         {
@@ -325,12 +331,11 @@ namespace WpfApp1
         {
             transform.defultMode = (short)MyTransform.Mode.edit;
         }
-
         private void FigureThickness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             transform.strongBrush = FigureThickness.Value;
+            transform.BrushEdit();
         }
-
         private void EllipseButton_Click(object sender, RoutedEventArgs e)
         {
             transform.defultMode = (short)MyTransform.Mode.elips;
@@ -344,7 +349,7 @@ namespace WpfApp1
 
         private void Fill(object sender, RoutedEventArgs e)
         {
-            transform.Fill();
+            transform.Recolor(true);
         }
     }
 }
