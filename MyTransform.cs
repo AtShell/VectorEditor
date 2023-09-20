@@ -40,7 +40,6 @@ namespace WpfApp1
 
         public Point posInBlock;
 
-        private Ellipse el;
         private Line line;
         private Rectangle rect;
         private Ellipse elipse;
@@ -52,10 +51,10 @@ namespace WpfApp1
         public Dictionary<Shape, Brush> TakenShapes = new Dictionary<Shape, Brush>();
         #endregion
 
-        public MyTransform(double strong,MainWindow win)
+        public MyTransform(double strong, MainWindow win)
         {
             strongBrush = strong;
-            window= win;
+            window = win;
         }
         public MyTransform() { }
 
@@ -87,32 +86,24 @@ namespace WpfApp1
                 case 4:
                     triangle = new Polygon();
                     InitializeColorStroke(triangle);
-                    triangle.Points = new PointCollection();
-                    triangle.Points.Add(new Point(1, 0));
-                    triangle.Points.Add(new Point(0, 1));
-                    triangle.Points.Add(new Point(2, 1));
+                    triangle.Points = new PointCollection
+                    {
+                        new Point(1, 0),
+                        new Point(0, 1),
+                        new Point(2, 1)
+                    };
                     Canvas.SetLeft(triangle, posInBlock.X);
                     Canvas.SetTop(triangle, posInBlock.Y);
                     return triangle;
                 default: return null;
             }
         }
-        private Ellipse CreatElips(Point p)
-        {
-            el = new Ellipse();
-            el.Width = 10;
-            el.Height = 10;
-            el.Stroke = Brushes.Red;
-            el.StrokeThickness = 2;
-            Canvas.SetTop(el, p.Y - 5);
-            Canvas.SetLeft(el, p.X - 5);
-            return el;
-        }
         public void DrawLine(Point pos)
         {
             line.X2 = pos.X;
             line.Y2 = pos.Y;
             line.Name = "Line";
+           
         }
         public void DrawRectangle(Point pos)
         {
@@ -231,7 +222,7 @@ namespace WpfApp1
             try
             {
                 var type = (Shape)e.Source;
-                
+
                 //add to empty list
                 if (TakenShapes.Count == 0)
                 {
@@ -359,33 +350,9 @@ namespace WpfApp1
                 shape.StrokeThickness = strongBrush;
             }
         }
-        public Shape Resize(Point pos, Shape name)
+        public void Resize()
         {
-            switch (name.Name)
-            {
-                case "Rectangle":
 
-                    return null;
-                case "Line":
-                    short mark;
-                    Line l = name as Line;
-                    if (Math.Abs(pos.X - l.X1) < 10 && Math.Abs(pos.Y - l.Y1) < 10)
-                    {
-                        mark = 1;
-                        return CreatElips(pos);
-                    }
-                    else if (Math.Abs(pos.X - l.X2) < 10 && Math.Abs(pos.Y - l.Y2) < 10)
-                    {
-                        mark = 2;
-                        return CreatElips(pos);
-                    }
-                    return null;
-                case "Ellipse":
-                    return null;
-                case "Triangle":
-                    return null;
-                default: return null;
-            }
         }
         public void Rotate()
         {

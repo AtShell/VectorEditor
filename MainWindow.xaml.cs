@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using static System.Windows.Forms.LinkLabel;
 
 namespace WpfApp1
 {
@@ -153,25 +154,47 @@ namespace WpfApp1
                 case 3:
                     if (e.LeftButton == MouseButtonState.Pressed)
                         transform.TranslateTransform(pos);
-                    else if (transform.TakenShapes.Count == 1)
-                    {
-                        try
-                        {
-                            DrawSpace.Children.Add(transform.Resize(pos, transform.TakenShapes.Keys.First()));
-                        }
-                        catch
-                        {
-
-                        }
-                    }
-                    else
-                        return;
                     break;
                 case 4:
                     if (e.LeftButton == MouseButtonState.Released)
                         return;
                     transform.DrawTriangle(pos);
                     break;
+            }
+        }
+        public double getLenghtLine(Shape shape)
+        {
+            int x1 = Convert.ToInt32((shape as Line).X1);
+            int x2 = Convert.ToInt32((shape as Line).X2);
+            int y1 = Convert.ToInt32((shape as Line).Y1);
+            int y2 = Convert.ToInt32((shape as Line).Y2);
+            return (Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2)));
+        }
+        private void VisibleElementSize(Shape shape = null)
+        {
+            if (shape != null)
+                switch (shape.Name)
+                {
+                    case "Line":
+                        length.Text = Convert.ToString(getLenghtLine(shape));
+                        break;
+                    case "Rectangle":
+                        length.Text = Convert.ToString((shape as Rectangle).Height);
+                        width.Text = Convert.ToString((shape as Rectangle).Width);
+                        break;
+                    case "Ellipse":
+                        length.Text = Convert.ToString((shape as Ellipse).Height);
+                        width.Text = Convert.ToString((shape as Ellipse).Width);
+                        break;
+                    case "Triangle":
+                        length.Text = Convert.ToString((shape as Polygon).Height);
+                        width.Text = Convert.ToString((shape as Polygon).Width);
+                        break;
+                }
+            else
+            {
+                length.Text = "---";
+                width.Text = "---";
             }
         }
         private void DrawSpace_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -198,6 +221,17 @@ namespace WpfApp1
                 case 3:
                     if (e.LeftButton == MouseButtonState.Pressed)
                         transform.Select(e);
+                    try
+                    {
+                        if (transform.TakenShapes.Count == 1)
+                            VisibleElementSize(transform.TakenShapes.First().Key);
+                        else
+                            VisibleElementSize();
+                    }
+                    catch
+                    {
+
+                    }
                     break;
             }
         }
@@ -350,6 +384,63 @@ namespace WpfApp1
         private void Fill(object sender, RoutedEventArgs e)
         {
             transform.Recolor(true);
+        }
+
+        private void length_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //edit lenght
+            try
+            {
+                switch (transform.TakenShapes.First().Key.Name)
+                {
+                    case "Line":
+                        double ki = getLenghtLine(transform.TakenShapes.First().Key);
+                        if (Convert.ToString(ki) != length.Text)
+                        {
+                            double k = Convert.ToDouble(length.Text) / ki;
+                            double[,] B = { { k, 0 }, { 0, k } };
+                            double[,] A = { { (transform.TakenShapes.First().Key as Line).X1, (transform.TakenShapes.First().Key as Line).Y1 }, { (transform.TakenShapes.First().Key as Line).X2, (transform.TakenShapes.First().Key as Line).Y2 } };
+                            double[,] C = { { (A[0, 0] * B[0, 0] + A[0, 1] * B[1, 0]), (A[0, 0] * B[0, 1] + A[0, 1] * B[1,1]) }, { (A[1, 0] * B[0, 0] + A[1,1] * B[1, 0]), (A[1,0] * B[0,1]) + A[1,1] * B[1,1] } };
+
+                            (transform.TakenShapes.First().Key as Line).X1 = C[0,0];
+                            (transform.TakenShapes.First().Key as Line).Y1 = C[0,1];
+                            (transform.TakenShapes.First().Key as Line).X2 = C[1,0];
+                            (transform.TakenShapes.First().Key as Line).Y2 = C[1, 1];
+                            width.Text = "---";
+                        }
+                        break;
+                    case "Rectangle":
+                        (transform.TakenShapes.First().Key as Rectangle).Height = Convert.ToDouble(length.Text);
+                        break;
+                    case "Ellipse":
+                        (transform.TakenShapes.First().Key as Ellipse).Height = Convert.ToDouble(length.Text);
+                        break;
+                    case "Triangle":
+                        (transform.TakenShapes.First().Key as Polygon).Height = Convert.ToDouble(length.Text);
+                        break;
+                }
+            }
+            catch { }
+        }
+
+        private void width_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                switch (transform.TakenShapes.First().Key.Name)
+                {
+                    case "Rectangle":
+                        (transform.TakenShapes.First().Key as Rectangle).Width = Convert.ToDouble(width.Text);
+                        break;
+                    case "Ellipse":
+                        (transform.TakenShapes.First().Key as Ellipse).Width = Convert.ToDouble(width.Text);
+                        break;
+                    case "Triangle":
+                        (transform.TakenShapes.First().Key as Polygon).Width = Convert.ToDouble(width.Text);
+                        break;
+                }
+            }
+            catch { }
         }
     }
 }

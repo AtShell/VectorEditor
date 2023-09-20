@@ -131,5 +131,8 @@
   <ItemGroup>
     <Resource Include="erazer.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resize.bmp" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
