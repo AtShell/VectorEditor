@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using static WpfApp1.MainWindow;
 using System.Windows.Media;
 using System.Xml.Linq;
+using System.Windows.Ink;
 
 namespace WpfApp1
 {
@@ -49,6 +50,8 @@ namespace WpfApp1
         public short defultMode = 0;
         public short color = 0;
         public Dictionary<Shape, Brush> TakenShapes = new Dictionary<Shape, Brush>();
+        public int counterGroup = 0;
+        public List<Dictionary<Shape, Brush>> ShapeGroup = new List<Dictionary<Shape, Brush>>();
         #endregion
 
         public MyTransform(double strong, MainWindow win)
@@ -103,7 +106,7 @@ namespace WpfApp1
             line.X2 = pos.X;
             line.Y2 = pos.Y;
             line.Name = "Line";
-           
+
         }
         public void DrawRectangle(Point pos)
         {
@@ -217,12 +220,33 @@ namespace WpfApp1
 
 
         #region TakenList manipulation
+        public int ShapeGroupContains(Shape ex)
+        {
+            int counter = 0;
+            foreach (var pair in ShapeGroup)
+            {
+                if (pair.ContainsKey(ex))
+                {
+                    return counter;
+                }
+            }
+            return -1; //notContainsKey
+        }
         public void Select(MouseButtonEventArgs e)
         {
             try
             {
                 var type = (Shape)e.Source;
+                int num = ShapeGroupContains(type);
+                if (ShapeGroup.Count >= 1 && num != -1)
+                {
 
+                    foreach (var shape in ShapeGroup[num])
+                    {
+                        TakenShapes.Add(shape.Key, Brushes.Aqua);
+                    }
+                    return;
+                }
                 //add to empty list
                 if (TakenShapes.Count == 0)
                 {
@@ -293,10 +317,21 @@ namespace WpfApp1
         }
         public void TakenShapeClear()
         {
-            foreach (Shape shape in TakenShapes.Keys)
+            try
             {
-                shape.Stroke = TakenShapes[shape];
+                foreach (Shape shape in TakenShapes.Keys)
+                {
+                    int num = ShapeGroupContains(shape);
+                    if (num == -1)
+                        shape.Stroke = TakenShapes[shape];
+                    else
+                    {
+                        Shape s = ShapeGroup[num].First().Key;
+                        shape.Stroke = s.Stroke;
+                    }
+                }
             }
+            catch { }
             TakenShapes.Clear();
         }
         public void TakenShapeRemove(Shape shape)
@@ -350,13 +385,26 @@ namespace WpfApp1
                 shape.StrokeThickness = strongBrush;
             }
         }
-        public void Resize()
-        {
-
-        }
         public void Rotate()
         {
+            foreach(Shape shape in TakenShapes.Keys)
+            {
+                switch(shape.Name)
+                {
 
+                    case "Line":
+                        break;
+                    case "Rectangle":
+                    case "Ellipse":
+                    case "Triangle":
+                        var rt = shape.RenderTransform as RotateTransform;
+                        var trans=new RotateTransform(45+(rt?.Angle??0));
+                        shape.RenderTransformOrigin = new Point(0.5,0.5);
+                        shape.RenderTransform = trans;  
+                        shape.RenderTransformOrigin = new Point(0,0);
+                        break;
+                }
+            }
         }
         #endregion
     }

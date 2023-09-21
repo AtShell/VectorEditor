@@ -21,70 +21,6 @@ namespace WpfApp1
         }
         private void newLine_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            switch (transform.defultMode)
-            {
-                case 0:
-                    /*if (StopPuncture)
-                    {
-                        StopPuncture = false;
-                    }
-                    {
-                        if (IsLineMod)
-                        {
-                            StopPuncture = true;
-                            Line lineT = (Line)sender;
-                            p = Mouse.GetPosition(DrawSpace);
-                            if (Math.Abs(p.X - lineT.X1) < 10 && Math.Abs(p.Y - lineT.Y1) < 10)
-                            {
-                                IsLineMod = false;
-                                IsEditMod = true;
-                                taker = CreatElips(p);
-                                editLine = lineT;
-                                mark = 1;
-                                Cursor = Cursors.Hand;
-                            }
-                            else if (Math.Abs(p.X - lineT.X2) < 10 && Math.Abs(p.Y - lineT.Y2) < 10)
-                            {
-                                IsLineMod = false;
-                                IsEditMod = true;
-                                taker = CreatElips(p);
-                                editLine = lineT;
-                                mark = 2;
-                                Cursor = Cursors.Hand;
-                            }
-                            else
-                            {
-                                if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                                {
-                                    try
-                                    {
-                                        TakenLines.Add(lineT, lineT.Stroke);
-                                        lineT.Stroke = Brushes.Aqua;
-                                    }
-                                    catch (ArgumentException)
-                                    {
-                                        lineT.Stroke = TakenLines[lineT];
-                                        TakenLines.Remove(lineT);
-                                    }
-
-                                }
-                                else
-                                {
-                                    TakenLinesClear();
-                                    TakenLines.Add(lineT, lineT.Stroke);
-                                    lineT.Stroke = Brushes.Aqua;
-                                }
-                            }
-                        }
-                    }*/
-                    //line = null;
-                    break;
-                case 1:
-                    //rect = null;
-                    break;
-            }
-
-
         }
         #region SwitchColor
         private void Black_Click(object sender, RoutedEventArgs e)
@@ -176,7 +112,7 @@ namespace WpfApp1
                 switch (shape.Name)
                 {
                     case "Line":
-                        length.Text = Convert.ToString(getLenghtLine(shape));
+                        length.Text = Convert.ToString(Convert.ToInt32(getLenghtLine(shape)));
                         break;
                     case "Rectangle":
                         length.Text = Convert.ToString((shape as Rectangle).Height);
@@ -250,45 +186,11 @@ namespace WpfApp1
 
         private void RotateButton(object sender, RoutedEventArgs e)
         {
-            /*foreach (Shape shape in TakenShapes.Keys)
+            try
             {
-                var index = DrawSpace.Children.IndexOf(shape);
-                //DrawSpace.Children.RemoveAt(index);
-                //
-                //var children = DrawSpace.Children[DrawSpace.Children.IndexOf(shape)];
-                //
-                var rotateTransform = shape.RenderTransform as RotateTransform;
-                //var rotateTransform = children.RenderTransform as RotateTransform;
-                var transform = new RotateTransform(45 + (rotateTransform?.Angle ?? 0));
-                var angel = transform.Angle * Math.PI / 180;
-                if (shape.Name == "Line")
-                {
-                    Line temp = shape as Line;
-                    Point center = new Point((temp.X1 + temp.X2) / 2, (temp.Y1 + temp.Y2) / 2);
-                    double x, y;
-                    x = temp.X1;
-                    y = temp.Y1;
-                    Rot(ref x, ref y, angel, center);
-                    temp.X1 = x;
-                    temp.Y1 = y;
-                    //
-                    x = temp.X2;
-                    y = temp.Y2;
-                    Rot(ref x, ref y, angel, center);
-                    temp.X2 = x;
-                    temp.Y2 = y;
-                    
-                    transform.CenterX = centerX / 2;
-                transform.CenterY = centerY / 2;
-                shape.RenderTransform = transform;
-                    //DrawSpace.Children.Add(temp);
-                }
-
-            }*/
-            /* foreach(Shape shape in TakenShapes.Keys)
-             {
-
-             }*/
+                transform.Rotate();
+            }
+            catch { }
         }
         private void Rot(ref double x, ref double y, double angel, Point center)
         {
@@ -299,6 +201,19 @@ namespace WpfApp1
         }
         private void ToGroup(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                if (transform.TakenShapes.Count > 1&&transform.ShapeGroupContains(transform.TakenShapes.First().Key)==-1)
+                {
+                    transform.ShapeGroup.Add(new System.Collections.Generic.Dictionary<Shape, Brush>(transform.TakenShapes));
+                }
+                else if (transform.ShapeGroupContains(transform.TakenShapes.First().Key) >= 0)
+                {
+                    transform.ShapeGroup[transform.ShapeGroupContains(transform.TakenShapes.First().Key)].Clear();
+                }
+            }
+            catch { }
+            /*
             //    double maxX = 0;
             //    double minX = 10000;
             //    double maxY = 0;
@@ -348,6 +263,7 @@ namespace WpfApp1
             //    DrawSpace.Children.Add(rect);
             //    Canvas.SetTop(rect, ((maxY+minY)/2)-rect.Height/2);
             //    Canvas.SetLeft(rect, ((maxX+minX)/2)-rect.Width/2);
+            */
         }
         #region SwitchMode
         private void LineButton_Click(object sender, RoutedEventArgs e)
@@ -398,13 +314,22 @@ namespace WpfApp1
                         if (Convert.ToString(ki) != length.Text)
                         {
                             double k = Convert.ToDouble(length.Text) / ki;
-                            double[,] B = { { k, 0 }, { 0, k } };
-                            double[,] A = { { (transform.TakenShapes.First().Key as Line).X1, (transform.TakenShapes.First().Key as Line).Y1 }, { (transform.TakenShapes.First().Key as Line).X2, (transform.TakenShapes.First().Key as Line).Y2 } };
-                            double[,] C = { { (A[0, 0] * B[0, 0] + A[0, 1] * B[1, 0]), (A[0, 0] * B[0, 1] + A[0, 1] * B[1,1]) }, { (A[1, 0] * B[0, 0] + A[1,1] * B[1, 0]), (A[1,0] * B[0,1]) + A[1,1] * B[1,1] } };
+                            double[,] B = {
+                                { k, 0 },
+                                { 0, k }
+                            };
+                            double[,] A = {
+                                { (transform.TakenShapes.First().Key as Line).X1, (transform.TakenShapes.First().Key as Line).Y1 },
+                                { (transform.TakenShapes.First().Key as Line).X2, (transform.TakenShapes.First().Key as Line).Y2 }
+                            };
+                            double[,] C = {
+                                { (A[0, 0] * B[0, 0] + A[0, 1] * B[1, 0]), (A[0, 0] * B[0, 1] + A[0, 1] * B[1,1]) },
+                                { (A[1, 0] * B[0, 0] + A[1,1] * B[1, 0]), (A[1,0] * B[0,1]) + A[1,1] * B[1,1] }
+                            };
 
-                            (transform.TakenShapes.First().Key as Line).X1 = C[0,0];
-                            (transform.TakenShapes.First().Key as Line).Y1 = C[0,1];
-                            (transform.TakenShapes.First().Key as Line).X2 = C[1,0];
+                            (transform.TakenShapes.First().Key as Line).X1 = C[0, 0];
+                            (transform.TakenShapes.First().Key as Line).Y1 = C[0, 1];
+                            (transform.TakenShapes.First().Key as Line).X2 = C[1, 0];
                             (transform.TakenShapes.First().Key as Line).Y2 = C[1, 1];
                             width.Text = "---";
                         }
@@ -417,6 +342,10 @@ namespace WpfApp1
                         break;
                     case "Triangle":
                         (transform.TakenShapes.First().Key as Polygon).Height = Convert.ToDouble(length.Text);
+                        break;
+                    default:
+                        width.Text = "---";
+                        length.Text = "---";
                         break;
                 }
             }
