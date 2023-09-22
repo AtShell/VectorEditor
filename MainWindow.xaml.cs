@@ -19,9 +19,6 @@ namespace WpfApp1
             InitializeComponent();
             transform = new MyTransform(FigureThickness.Value, this);
         }
-        private void newLine_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-        }
         #region SwitchColor
         private void Black_Click(object sender, RoutedEventArgs e)
         {
@@ -98,21 +95,14 @@ namespace WpfApp1
                     break;
             }
         }
-        public double getLenghtLine(Shape shape)
-        {
-            int x1 = Convert.ToInt32((shape as Line).X1);
-            int x2 = Convert.ToInt32((shape as Line).X2);
-            int y1 = Convert.ToInt32((shape as Line).Y1);
-            int y2 = Convert.ToInt32((shape as Line).Y2);
-            return (Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2)));
-        }
         private void VisibleElementSize(Shape shape = null)
         {
             if (shape != null)
                 switch (shape.Name)
                 {
                     case "Line":
-                        length.Text = Convert.ToString(Convert.ToInt32(getLenghtLine(shape)));
+                        length.Text = Convert.ToString((shape as Polyline).Width);
+                        width.Text = "---";
                         break;
                     case "Rectangle":
                         length.Text = Convert.ToString((shape as Rectangle).Height);
@@ -192,18 +182,11 @@ namespace WpfApp1
             }
             catch { }
         }
-        private void Rot(ref double x, ref double y, double angel, Point center)
-        {
-            double[] n = new double[2] { x, y };
-            double[,] m = { { Math.Cos(angel), -Math.Sin(angel) }, { Math.Sin(angel), Math.Cos(angel) } };
-            x = (n[0] * m[0, 0]) + (n[1] * m[1, 0]);
-            y = (n[0] * m[0, 1]) + (n[1] * m[1, 1]);
-        }
         private void ToGroup(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (transform.TakenShapes.Count > 1&&transform.ShapeGroupContains(transform.TakenShapes.First().Key)==-1)
+                if (transform.TakenShapes.Count > 1 && transform.ShapeGroupContains(transform.TakenShapes.First().Key) == -1)
                 {
                     transform.ShapeGroup.Add(new System.Collections.Generic.Dictionary<Shape, Brush>(transform.TakenShapes));
                 }
@@ -310,29 +293,7 @@ namespace WpfApp1
                 switch (transform.TakenShapes.First().Key.Name)
                 {
                     case "Line":
-                        double ki = getLenghtLine(transform.TakenShapes.First().Key);
-                        if (Convert.ToString(ki) != length.Text)
-                        {
-                            double k = Convert.ToDouble(length.Text) / ki;
-                            double[,] B = {
-                                { k, 0 },
-                                { 0, k }
-                            };
-                            double[,] A = {
-                                { (transform.TakenShapes.First().Key as Line).X1, (transform.TakenShapes.First().Key as Line).Y1 },
-                                { (transform.TakenShapes.First().Key as Line).X2, (transform.TakenShapes.First().Key as Line).Y2 }
-                            };
-                            double[,] C = {
-                                { (A[0, 0] * B[0, 0] + A[0, 1] * B[1, 0]), (A[0, 0] * B[0, 1] + A[0, 1] * B[1,1]) },
-                                { (A[1, 0] * B[0, 0] + A[1,1] * B[1, 0]), (A[1,0] * B[0,1]) + A[1,1] * B[1,1] }
-                            };
-
-                            (transform.TakenShapes.First().Key as Line).X1 = C[0, 0];
-                            (transform.TakenShapes.First().Key as Line).Y1 = C[0, 1];
-                            (transform.TakenShapes.First().Key as Line).X2 = C[1, 0];
-                            (transform.TakenShapes.First().Key as Line).Y2 = C[1, 1];
-                            width.Text = "---";
-                        }
+                        (transform.TakenShapes.First().Key as Polyline).Width = Convert.ToDouble(length.Text);
                         break;
                     case "Rectangle":
                         (transform.TakenShapes.First().Key as Rectangle).Height = Convert.ToDouble(length.Text);

@@ -41,16 +41,15 @@ namespace WpfApp1
 
         public Point posInBlock;
 
-        private Line line;
         private Rectangle rect;
         private Ellipse elipse;
         private Polygon triangle;
+        private Polyline pline;
         private MainWindow window;
         public double strongBrush;
         public short defultMode = 0;
         public short color = 0;
         public Dictionary<Shape, Brush> TakenShapes = new Dictionary<Shape, Brush>();
-        public int counterGroup = 0;
         public List<Dictionary<Shape, Brush>> ShapeGroup = new List<Dictionary<Shape, Brush>>();
         #endregion
 
@@ -67,13 +66,16 @@ namespace WpfApp1
             switch (defultMode)
             {
                 case 0:
-                    line = new Line();
-                    InitializeColorStroke(line);
-                    line.X1 = posInBlock.X;
-                    line.X2 = posInBlock.X;
-                    line.Y1 = posInBlock.Y;
-                    line.Y2 = posInBlock.Y;
-                    return line;
+                    pline = new Polyline();
+                    InitializeColorStroke(pline);
+                    pline.Points = new PointCollection
+                    {
+                        new Point(1,0),
+                        new Point(2,1),
+                    };
+                    Canvas.SetLeft(pline, posInBlock.X);
+                    Canvas.SetTop(pline, posInBlock.Y);
+                    return pline;
                 case 1:
                     rect = new Rectangle();
                     InitializeColorStroke(rect);
@@ -103,10 +105,14 @@ namespace WpfApp1
         }
         public void DrawLine(Point pos)
         {
-            line.X2 = pos.X;
-            line.Y2 = pos.Y;
-            line.Name = "Line";
-
+            var x = Math.Min(pos.X, posInBlock.X);
+            var y = Math.Min(pos.Y, posInBlock.Y);
+            var w = Math.Max(pos.X, posInBlock.X) - x;
+            pline.Name = "Line";
+            pline.Width = w;
+            pline.Stretch = Stretch.Fill;
+            Canvas.SetLeft(pline, x);
+            Canvas.SetTop(pline, y);
         }
         public void DrawRectangle(Point pos)
         {
@@ -357,24 +363,11 @@ namespace WpfApp1
             double new_x, new_y;
             foreach (Shape shape in TakenShapes.Keys)
             {
-                switch (shape.Name)
-                {
-                    case "Rectangle":
-                    case "Ellipse":
-                    case "Triangle":
-                        new_x = Canvas.GetLeft(shape) + offset_x;
-                        new_y = Canvas.GetTop(shape) + offset_y;
-                        Canvas.SetLeft(shape, new_x);
-                        Canvas.SetTop(shape, new_y);
-                        break;
-                    case "Line":
-                        var line = shape as Line;
-                        line.X1 += pos.X - posInBlock.X;
-                        line.X2 += pos.X - posInBlock.X;
-                        line.Y1 += pos.Y - posInBlock.Y;
-                        line.Y2 += pos.Y - posInBlock.Y;
-                        break;
-                }
+                new_x = Canvas.GetLeft(shape) + offset_x;
+                new_y = Canvas.GetTop(shape) + offset_y;
+                Canvas.SetLeft(shape, new_x);
+                Canvas.SetTop(shape, new_y);
+                break;
             }
             posInBlock = pos;
         }
@@ -387,23 +380,12 @@ namespace WpfApp1
         }
         public void Rotate()
         {
-            foreach(Shape shape in TakenShapes.Keys)
+            foreach (Shape shape in TakenShapes.Keys)
             {
-                switch(shape.Name)
-                {
-
-                    case "Line":
-                        break;
-                    case "Rectangle":
-                    case "Ellipse":
-                    case "Triangle":
-                        var rt = shape.RenderTransform as RotateTransform;
-                        var trans=new RotateTransform(45+(rt?.Angle??0));
-                        shape.RenderTransformOrigin = new Point(0.5,0.5);
-                        shape.RenderTransform = trans;  
-                        shape.RenderTransformOrigin = new Point(0,0);
-                        break;
-                }
+                var rt = shape.RenderTransform as RotateTransform;
+                var trans = new RotateTransform(45 + (rt?.Angle ?? 0));
+                shape.RenderTransformOrigin = new Point(0.5, 0.5);
+                shape.RenderTransform = trans;
             }
         }
         #endregion
